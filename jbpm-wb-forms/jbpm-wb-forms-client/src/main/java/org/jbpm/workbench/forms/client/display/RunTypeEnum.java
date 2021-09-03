@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package org.jbpm.workbench.forms.client.display.views.display;
+package org.jbpm.workbench.forms.client.display;
 
-import com.google.gwt.user.client.ui.IsWidget;
-import org.jbpm.workbench.forms.client.display.GenericFormDisplayer;
-
-public interface EmbeddedFormDisplayerView extends IsWidget {
-
-    void display(GenericFormDisplayer displayer);
-
-    void showErrorMessage(String errorHeader, String errorMessage);
-    
-    void showFormError(String errorHeader, String errorMessage);
+public enum RunTypeEnum {
+    START,                      // start form
+    COMPLETE,                  // complete form
 }
+

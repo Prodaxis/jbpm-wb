@@ -16,6 +16,7 @@
 
 package org.jbpm.workbench.forms.service.providing;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jbpm.workbench.forms.service.providing.model.TaskDefinition;
@@ -26,9 +27,11 @@ public class TaskRenderingSettings implements RenderingSettings {
     private TaskDefinition task;
     private Map<String, Object> inputs;
     private Map<String, Object> outputs;
+    private Map<String, Object> renderingMetaData = new HashMap<String, Object>();
     private String serverTemplateId;
     private String formContent;
     private ContentMarshallerContext marshallerContext;
+    private Map<String, Object> processInstanceVariables;
 
     public TaskRenderingSettings(TaskDefinition task,
                                  Map<String, Object> inputs,
@@ -92,4 +95,24 @@ public class TaskRenderingSettings implements RenderingSettings {
     public void setMarshallerContext(ContentMarshallerContext marshallerContext) {
         this.marshallerContext = marshallerContext;
     }
+
+    @Override
+	public Map getProcessInstanceVariables() {
+		return processInstanceVariables;
+	}
+
+	public void setProcessInstanceVariables(Map processInstanceVariables) {
+		this.processInstanceVariables = processInstanceVariables;
+	}
+
+	@Override
+	public Map getInputData() {
+		return inputs;
+	}
+
+	@Override
+	public Map getRenderingMetaData() {
+		return renderingMetaData;
+	}
+	
 }

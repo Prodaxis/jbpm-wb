@@ -105,4 +105,9 @@ public class ProcessFormsValuesProcessor extends KieWorkbenchFormsValuesProcesso
     protected Logger getLogger() {
         return logger;
     }
+
+	@Override
+	public Object convertBPMNObject(String variableName, Object objectValue) {
+		return null;
+	}
 }

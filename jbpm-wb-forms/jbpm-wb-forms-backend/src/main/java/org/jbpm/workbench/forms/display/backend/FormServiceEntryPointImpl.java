@@ -16,8 +16,11 @@
 
 package org.jbpm.workbench.forms.display.backend;
 
+import static org.jbpm.workbench.forms.display.backend.conversion.TaskDataConverterUtil.convert;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -53,8 +56,6 @@ import org.kie.server.client.UIServicesClient;
 import org.kie.server.client.UserTaskServicesClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.jbpm.workbench.forms.display.backend.conversion.TaskDataConverterUtil.convert;
 
 @Service
 @ApplicationScoped
@@ -192,15 +193,12 @@ public class FormServiceEntryPointImpl extends AbstractKieServerService implemen
 
         taskInstance.setStatus(task.getStatus());
 
-        TaskInputsDefinition inputDefinitions = processService.getUserTaskInputDefinitions(domainId,
-                                                                                           task.getProcessId(),
-                                                                                           task.getName());
-
+        TaskInputsDefinition inputDefinitions = processService.getUserTaskInputDefinitions(domainId, task.getProcessId(), task.getName());
+        Map<String, Object> metaData = processService.getActiveNodeUIMetaData(domainId, task.getProcessInstanceId(), task.getWorkItemId());
+        
         taskInstance.setTaskInputDefinitions(inputDefinitions.getTaskInputs());
 
-        TaskOutputsDefinition outputDefinitions = processService.getUserTaskOutputDefinitions(domainId,
-                                                                                              task.getProcessId(),
-                                                                                              task.getName());
+        TaskOutputsDefinition outputDefinitions = processService.getUserTaskOutputDefinitions(domainId, task.getProcessId(), task.getName());
 
         taskInstance.setTaskOutputDefinitions(outputDefinitions.getTaskOutputs());
 
@@ -227,6 +225,15 @@ public class FormServiceEntryPointImpl extends AbstractKieServerService implemen
                                                                        formContent,
                                                                        new ContentMarshallerContext(null,
                                                                                                     kieServicesClient.getClassLoader()));
+            settings.getRenderingMetaData().putAll(metaData);
+            try {
+            	Map processInstanceVariables = processService.getProcessInstanceVariables(domainId, task.getProcessInstanceId());
+            	if(null != processInstanceVariables){
+            		settings.setProcessInstanceVariables(shallowCopy(processInstanceVariables));
+            	}
+			} catch (Exception e) {
+				logger.debug("Unable to get process instance variables from kie server", taskId, e.getMessage());
+			}
             for (FormProvider provider : providers) {
                 FormRenderingSettings template = provider.render(settings);
                 if (template != null) {
@@ -245,6 +252,7 @@ public class FormServiceEntryPointImpl extends AbstractKieServerService implemen
                                      taskInstance,
                                      inputs,
                                      outputs,
+                                     metaData,
                                      kieServicesClient);
     }
 
@@ -312,15 +320,18 @@ public class FormServiceEntryPointImpl extends AbstractKieServerService implemen
     private FormRenderingSettings renderDefaultTaskForm(String serverTemplateId,
                                                         TaskDefinition taskInstance,
                                                         Map<String, Object> inputs,
-                                                        Map<String, Object> outputs,
+                                                        Map<String, Object> outputs, 
+                                                        Map<String, Object> renderingMetaData,
                                                         KieServicesClient kieServicesClient) {
-        return defaultFormProvider.render(new TaskRenderingSettings(taskInstance,
-                                                                    inputs,
-                                                                    outputs,
-                                                                    serverTemplateId,
-                                                                    "",
-                                                                    new ContentMarshallerContext(null,
-                                                                                                 kieServicesClient.getClassLoader())));
+    	TaskRenderingSettings taskRenderingSettings = new TaskRenderingSettings(taskInstance,
+                inputs,
+                outputs,
+                serverTemplateId,
+                "",
+                new ContentMarshallerContext(null,
+                                             kieServicesClient.getClassLoader()));
+    	taskRenderingSettings.getRenderingMetaData().putAll(renderingMetaData);
+        return defaultFormProvider.render(taskRenderingSettings);
     }
 
     private FormRenderingSettings renderDefaultProcessForm(String serverTemplateId,
@@ -364,4 +375,13 @@ public class FormServiceEntryPointImpl extends AbstractKieServerService implemen
     protected void setKieServerFormRenderer(boolean value) {
         this.kieServerFormRenderer = value;
     }
+    
+    private HashMap<String, Object> shallowCopy(Map<String, Object> map){
+		HashMap<String, Object> shallowCopy = new HashMap<String, Object>();
+		Set<Entry<String, Object>> entries = map.entrySet();
+		for (Map.Entry<String, Object> mapEntry : entries) {
+		    shallowCopy.put(mapEntry.getKey(), mapEntry.getValue());
+		}
+		return shallowCopy;
+	}
 }

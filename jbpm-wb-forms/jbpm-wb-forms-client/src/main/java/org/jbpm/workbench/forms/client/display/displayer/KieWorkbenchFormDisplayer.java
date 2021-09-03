@@ -16,13 +16,16 @@
 
 package org.jbpm.workbench.forms.client.display.displayer;
 
-import elemental2.dom.HTMLElement;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.jboss.errai.common.client.api.elemental2.IsElement;
+import org.jbpm.workbench.forms.client.display.GenericFormDisplayer;
+import org.jbpm.workbench.forms.client.display.RunTypeEnum;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
+import elemental2.dom.HTMLElement;
 
 @Dependent
 public class KieWorkbenchFormDisplayer implements IsElement {
@@ -47,5 +50,11 @@ public class KieWorkbenchFormDisplayer implements IsElement {
 
     public boolean isValid() {
         return view.isValid();
+    }
+    
+    public void validAndRun(GenericFormDisplayer genericFormDisplayer, RunTypeEnum runType){
+        if(isValid()){
+            view.validAsyncAndRun(genericFormDisplayer, runType);
+        }
     }
 }

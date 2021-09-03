@@ -45,7 +45,9 @@ import org.jbpm.workbench.ht.model.TaskSummary;
 import org.jbpm.workbench.ht.model.events.TaskRefreshedEvent;
 import org.jbpm.workbench.ht.service.TaskService;
 import org.jbpm.workbench.ht.util.TaskStatus;
+import org.kie.workbench.common.forms.dynamic.service.shared.ParteorComponentDataService;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
+import org.uberfire.mvp.BiParameterizedCommand;
 import org.uberfire.mvp.Command;
 
 public abstract class AbstractHumanTaskFormDisplayer<S extends FormRenderingSettings> implements HumanTaskFormDisplayer<S> {
@@ -69,6 +71,9 @@ public abstract class AbstractHumanTaskFormDisplayer<S extends FormRenderingSett
 
     @Inject
     protected Event<TaskRefreshedEvent> taskRefreshed;
+    
+    @Inject
+    protected Caller<ParteorComponentDataService> parteorComponentDataService;
 
     @Inject
     protected User identity;
@@ -76,6 +81,8 @@ public abstract class AbstractHumanTaskFormDisplayer<S extends FormRenderingSett
     private Command onClose;
 
     private Command onRefresh;
+    
+    private BiParameterizedCommand onValidationFailed;
 
     protected abstract void initDisplayer();
 
@@ -316,11 +323,22 @@ public abstract class AbstractHumanTaskFormDisplayer<S extends FormRenderingSett
         this.onRefresh = callback;
     }
 
-    protected void refresh() {
+    @Override
+	public void addOnValidationFailedCallBack(BiParameterizedCommand callback) {
+		this.onValidationFailed = callback;
+	}
+
+	protected void refresh() {
         if (this.onRefresh != null) {
             this.onRefresh.execute();
         }
     }
+	
+	protected void validFailed(String header, String message){
+		if (this.onValidationFailed != null) {
+            this.onValidationFailed.execute(header, message);
+        }
+	}
 
     @Override
     public void close() {

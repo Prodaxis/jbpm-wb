@@ -270,6 +270,11 @@ public class QuickNewProcessInstancePopup extends BaseModal implements FormDispl
     public void displayErrorMessage(String header, String errorMessage) {
         ErrorPopup.showMessage(header + "\n" + errorMessage);
     }
+    
+    @Override
+	public void showFormError(String errorHeader, String errorMessage) {
+    	ErrorPopup.showMessage(errorHeader + "\n" + errorMessage);
+	}
 
     private void removeFooter(final ComplexPanel panel) {
         for (Widget widget : panel) {

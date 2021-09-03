@@ -60,6 +60,8 @@ public interface Constants extends Messages {
     String Correlation_Key();
 
     String UnexpectedError(String errorMessage);
+    
+    String ActionCheckValueExist();
 
     String TaskCompleted(Long id);
 
@@ -90,6 +92,12 @@ public interface Constants extends Messages {
     String TaskFormErrorHeader();
 
     String PermissionDenied();
+    
+    String ValueNotExistInTable(String value, String table);
+    
+    String FieldKeyMappingIsRequiredToCheckExist();
+    
+    String FieldKeyValueMappingFormatErorr();
 
     String Exception(String message);
 }

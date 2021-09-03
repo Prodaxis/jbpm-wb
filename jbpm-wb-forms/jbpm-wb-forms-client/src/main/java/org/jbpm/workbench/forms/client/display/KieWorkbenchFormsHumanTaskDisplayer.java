@@ -20,6 +20,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jbpm.workbench.forms.client.display.displayer.KieWorkbenchFormDisplayer;
 import org.jbpm.workbench.forms.display.FormDisplayerConfig;
@@ -60,15 +62,7 @@ public class KieWorkbenchFormsHumanTaskDisplayer extends AbstractHumanTaskFormDi
 
     @Override
     protected void completeFromDisplayer() {
-        if (formDisplayer.isValid()) {
-            service.call(getCompleteTaskRemoteCallback(),
-                         getUnexpectedErrorCallback()).completeTaskFromContext(
-                    renderingSettings.getTimestamp(),
-                    renderingSettings.getRenderingContext().getModel(),
-                    serverTemplateId,
-                    deploymentId,
-                    taskId);
-        }
+        formDisplayer.validAndRun(this, RunTypeEnum.COMPLETE);
     }
 
     @Override
@@ -113,5 +107,43 @@ public class KieWorkbenchFormsHumanTaskDisplayer extends AbstractHumanTaskFormDi
     @Override
     public boolean appendFooter() {
         return true;
+    }
+
+    @Override
+    public void runCallbackAfterValid(RunTypeEnum runType) {
+        if(runType == RunTypeEnum.COMPLETE){
+        	if(!isRootFormNeedValid()){
+        		completeTaskFromContext();
+        	}else{
+        		parteorComponentDataService.call(new RemoteCallback() {
+					@Override
+					public void callback(Object response) {
+						if(null == response || "".equals(response.toString())){
+							completeTaskFromContext();
+						}else{
+							validFailed("Erreur d'exécution du script validation de formulaire: ", response.toString());
+						}
+					}
+				}, new ErrorCallback() {
+					@Override
+					public boolean error(Object message, Throwable throwable) {
+						validFailed("Imposible d'appeler exécution du script validation de formulaire: ", message + "");
+						return false;
+					}
+				}).runFormValidationJSScript(serverTemplateId, deploymentId, taskId, renderingSettings.getRenderingContext().getNodeRenderingSettingsMetaData().get("onValidationAction").toString(), renderingSettings.getRenderingContext().getModel());
+        	}
+        }
+    }
+    
+    private void completeTaskFromContext(){
+    	service.call(getCompleteTaskRemoteCallback(), getUnexpectedErrorCallback()).completeTaskFromContext(renderingSettings.getTimestamp(), renderingSettings.getRenderingContext().getModel(), serverTemplateId, deploymentId, taskId);
+    }
+    
+    private boolean isRootFormNeedValid(){
+    	Object scriptFormValid = renderingSettings.getRenderingContext().getNodeRenderingSettingsMetaData().get("onValidationAction");
+    	if(null != scriptFormValid && scriptFormValid.toString().trim().length() > 0){
+    		return true;
+    	}
+    	return false;
     }
 }

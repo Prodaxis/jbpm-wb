@@ -136,4 +136,9 @@ public class KieServerFormsHumanTaskDisplayer extends AbstractHumanTaskFormDispl
     public boolean appendFooter() {
         return false;
     }
+
+    @Override
+    public void runCallbackAfterValid(RunTypeEnum runType) {
+        System.out.println("@@@ Not implement for Kie Server");
+    }
 }

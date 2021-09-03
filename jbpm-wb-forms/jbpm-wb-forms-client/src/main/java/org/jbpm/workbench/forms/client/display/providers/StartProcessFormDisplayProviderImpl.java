@@ -88,21 +88,22 @@ public class StartProcessFormDisplayProviderImpl implements StartProcessFormDisp
                     if (settings == null) {
                         ErrorPopup.showMessage(constants.UnableToFindFormForProcess(config.getProcessName()));
                     } else {
-                        StartProcessFormDisplayer displayer = processDisplayers.get(settings.getClass());
-
-                        if (displayer != null) {
-                            config.setRenderingSettings(settings);
-                            displayer.init(config,
-                                           view.getOnCloseCommand(),
-                                           new Command() {
-                                               @Override
-                                               public void execute() {
-                                                   display(config,
-                                                           view);
-                                               }
-                                           });
-                            view.display(displayer);
-                        }
+                        try {
+                        	StartProcessFormDisplayer displayer = processDisplayers.get(settings.getClass());
+                            if (displayer != null) {
+                                config.setRenderingSettings(settings);
+                                displayer.init(config, view.getOnCloseCommand(),
+                                               new Command() {
+                                                   @Override
+                                                   public void execute() {
+                                                       display(config, view);
+                                                   }
+                                               });
+                                view.display(displayer);
+                            }
+						} catch (Exception e) {
+							 ErrorPopup.showMessage("Erreur de rendu du formulaire de démarrage du processus " + e.getMessage() == null ? "" : e.getMessage());
+						}
                     }
                 }
             }).getFormDisplayProcess(config.getKey().getServerTemplateId(),

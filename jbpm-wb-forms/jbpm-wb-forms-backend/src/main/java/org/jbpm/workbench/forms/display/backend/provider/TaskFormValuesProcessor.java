@@ -179,4 +179,9 @@ public class TaskFormValuesProcessor extends KieWorkbenchFormsValuesProcessor<Ta
     protected Logger getLogger() {
         return logger;
     }
+
+	@Override
+	public Object convertBPMNObject(String variableName, Object objectValue) {
+		return null;
+	}
 }

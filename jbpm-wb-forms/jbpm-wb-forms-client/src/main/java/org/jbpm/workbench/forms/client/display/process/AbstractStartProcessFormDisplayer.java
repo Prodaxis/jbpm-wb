@@ -54,6 +54,7 @@ import org.jbpm.workbench.pr.events.NewProcessInstanceEvent;
 import org.jbpm.workbench.pr.model.ProcessDefinitionKey;
 import org.jbpm.workbench.pr.service.ProcessService;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
+import org.uberfire.mvp.BiParameterizedCommand;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -92,6 +93,8 @@ public abstract class AbstractStartProcessFormDisplayer<S extends FormRenderingS
     private Command onClose;
 
     private Command onRefresh;
+    
+    private BiParameterizedCommand onValidationFailed;
 
     @PostConstruct
     protected void init() {
@@ -249,9 +252,20 @@ public abstract class AbstractStartProcessFormDisplayer<S extends FormRenderingS
         this.onRefresh = callback;
     }
 
-    public void refresh() {
+    @Override
+	public void addOnValidationFailedCallBack(BiParameterizedCommand callback) {
+		this.onValidationFailed = callback;
+	}
+
+	public void refresh() {
         if (this.onRefresh != null) {
             this.onRefresh.execute();
+        }
+    }
+	
+	public void validationFailed(String header, String message) {
+        if (this.onValidationFailed != null) {
+            this.onValidationFailed.execute(header, message);
         }
     }
 

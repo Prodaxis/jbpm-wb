@@ -53,6 +53,11 @@ public class EmbeddedFormDisplayer implements FormDisplayerView,
     }
 
     @Override
+	public void showFormError(String errorHeader, String errorMessage) {
+    	 view.showFormError(errorHeader, errorMessage);
+	}
+    
+    @Override
     public Command getOnCloseCommand() {
         return onCloseCommand;
     }

@@ -13,19 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jbpm.workbench.forms.client.display.field;
 
-package org.jbpm.workbench.forms.client.display.displayer;
-
-import org.jboss.errai.common.client.api.elemental2.IsElement;
-import org.jbpm.workbench.forms.client.display.GenericFormDisplayer;
-import org.jbpm.workbench.forms.client.display.RunTypeEnum;
-import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
-
-public interface KieWorkbenchFormDisplayerView extends IsElement {
-
-    void show(FormRenderingContext ctx, boolean showHeader);
-
-    boolean isValid();
-    
-    void validAsyncAndRun(GenericFormDisplayer genericFormDisplayer, RunTypeEnum runType);
+public enum AsyncErrorType {
+    NOT_EXIST
 }

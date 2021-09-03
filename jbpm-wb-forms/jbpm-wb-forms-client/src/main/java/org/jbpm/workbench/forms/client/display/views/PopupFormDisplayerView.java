@@ -93,6 +93,11 @@ public class PopupFormDisplayerView extends BaseModal implements FormDisplayerVi
     public void displayErrorMessage(String header, String errorMessage) {
         ErrorPopup.showMessage(header + "\n" + errorMessage);
     }
+    
+    @Override
+	public void showFormError(String errorHeader, String errorMessage) {
+    	 ErrorPopup.showMessage(errorHeader + "\n" + errorMessage);
+	}
 
     @Override
     public Command getOnCloseCommand() {

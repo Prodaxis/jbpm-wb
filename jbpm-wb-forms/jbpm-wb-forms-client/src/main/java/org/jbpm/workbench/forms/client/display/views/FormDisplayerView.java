@@ -32,4 +32,6 @@ public interface FormDisplayerView {
     GenericFormDisplayer getCurrentDisplayer();
 
     void displayErrorMessage(String errorHeader, String errorMessage);
+    
+    void showFormError(String errorHeader, String errorMessage);
 }

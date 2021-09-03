@@ -58,7 +58,17 @@ public class KieWorkbenchFormsStartProcessDisplayer extends AbstractStartProcess
 
     @Override
     public void startProcessFromDisplayer() {
-        if (formDisplayer.isValid()) {
+        formDisplayer.validAndRun(this, RunTypeEnum.START);
+    }
+    
+    @Override
+    public boolean appendFooter() {
+        return true;
+    }
+
+    @Override
+    public void runCallbackAfterValid(RunTypeEnum runType) {
+        if(runType == RunTypeEnum.START){
             service.call(getStartProcessRemoteCallback()).startProcessFromRenderContext(
                     renderingSettings.getTimestamp(),
                     renderingSettings.getRenderingContext().getModel(),
@@ -67,10 +77,5 @@ public class KieWorkbenchFormsStartProcessDisplayer extends AbstractStartProcess
                     processDefId,
                     getCorrelationKey());
         }
-    }
-    
-    @Override
-    public boolean appendFooter() {
-        return true;
     }
 }

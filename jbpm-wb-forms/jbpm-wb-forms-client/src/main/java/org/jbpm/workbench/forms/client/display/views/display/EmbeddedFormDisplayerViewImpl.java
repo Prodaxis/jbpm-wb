@@ -96,4 +96,11 @@ public class EmbeddedFormDisplayerViewImpl extends Composite implements Embedded
         errorContainer.removeAllChildren();
         errorHeader.removeAllChildren();
     }
+
+	@Override
+	public void showFormError(String header, String errorMessage) {
+		errorContainerRow.getStyle().setDisplay(Style.Display.BLOCK);
+        errorHeader.setInnerText(header);
+        errorContainer.setInnerText(errorMessage);
+	}
 }

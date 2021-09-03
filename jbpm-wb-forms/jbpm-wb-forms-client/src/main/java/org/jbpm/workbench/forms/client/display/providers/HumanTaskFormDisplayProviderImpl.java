@@ -40,6 +40,7 @@ import org.jbpm.workbench.forms.display.api.HumanTaskDisplayerConfig;
 import org.jbpm.workbench.forms.display.api.TaskFormPermissionDeniedException;
 import org.jbpm.workbench.forms.service.shared.FormServiceEntryPoint;
 import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
+import org.uberfire.mvp.BiParameterizedCommand;
 
 @ApplicationScoped
 public class HumanTaskFormDisplayProviderImpl implements HumanTaskFormDisplayProvider {
@@ -87,12 +88,15 @@ public class HumanTaskFormDisplayProviderImpl implements HumanTaskFormDisplayPro
                     ErrorPopup.showMessage(constants.UnableToFindFormForTask(config.getKey().getTaskId()));
                 } else {
                     HumanTaskFormDisplayer displayer = taskDisplayers.get(settings.getClass());
-
                     if (displayer != null) {
                         config.setRenderingSettings(settings);
-                        displayer.init(config,
-                                       view.getOnCloseCommand(),
-                                       () -> display(config, view));
+                        displayer.init(config, view.getOnCloseCommand(), () -> display(config, view));
+                        displayer.addOnValidationFailedCallBack(new BiParameterizedCommand<String, String>() {
+							@Override
+							public void execute(String parameter1, String parameter2) {
+								view.showFormError(parameter1, parameter2);
+							}
+						});
                         view.display(displayer);
                     }
                 }

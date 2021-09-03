@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Panel;
 import org.jbpm.workbench.forms.display.FormDisplayerConfig;
 import org.jbpm.workbench.forms.display.FormRenderingSettings;
 import org.jbpm.workbench.common.service.ItemKey;
+import org.uberfire.mvp.BiParameterizedCommand;
 import org.uberfire.mvp.Command;
 
 public interface GenericFormDisplayer<T extends ItemKey, S extends FormRenderingSettings> {
@@ -38,8 +39,12 @@ public interface GenericFormDisplayer<T extends ItemKey, S extends FormRendering
     void addOnCloseCallback(Command callback);
 
     void addOnRefreshCallback(Command callback);
+    
+    void addOnValidationFailedCallBack(BiParameterizedCommand callback);
 
     void close();
     
     boolean appendFooter();
+    
+    void runCallbackAfterValid(RunTypeEnum runType);
 }
