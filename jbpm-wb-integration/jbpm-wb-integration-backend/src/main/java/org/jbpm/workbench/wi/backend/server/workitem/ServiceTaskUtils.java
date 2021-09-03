@@ -26,7 +26,8 @@ public class ServiceTaskUtils {
                                                          "jbpm-workitems-rest", 
                                                          "jbpm-workitems-jms", 
                                                          "jbpm-workitems-email", 
-                                                         "jbpm-workitems-bpmn2");
+                                                         "jbpm-workitems-bpmn2",
+                                                         "parteor-services-workitem");
 
     public static String extractTargetInfo(String target) {
         URI uri = URI.create(target);        

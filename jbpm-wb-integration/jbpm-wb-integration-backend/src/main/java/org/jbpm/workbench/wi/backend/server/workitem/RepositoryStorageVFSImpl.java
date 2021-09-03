@@ -96,6 +96,8 @@ public class RepositoryStorageVFSImpl extends InMemoryRepositoryStorage<ServiceT
                     // by default service is disabled unless is in default set
                     if (!ServiceTaskUtils.DEFAULT_HANDLERS.contains(service.getModule())) {
                         service.setEnabled(false);
+                    }else{
+                		service.setEnabled(true);
                     }
                     services.add(service);
                 }
